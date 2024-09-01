@@ -23,6 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-.vite
-.vscode
-.DS_Store
+*.vite
+*.vscode
+*.DS_Store
