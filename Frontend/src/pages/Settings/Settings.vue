@@ -1,5 +1,5 @@
 <template>
-    <p class="text-black">Settings</p>
+    <p>Settings</p>
  </template>
  <script setup lang="ts">
  </script>

@@ -1,16 +1,16 @@
 <template>
     <div class="customGrid flex flex-row gap-2">
         <div class="flex flex-col gap-3 px-2" :class="rightToggle == true ? 'w-2/3': 'w-full'">
-            <p class="text-slate-900 text-5xl font-bold pb-5">{{ props.nameOfHeading }}</p>
-            <div class="flex flex-row text-zinc-600 items-center p-2 text-sm gap-2 cursor-pointer border rounded-md" @click="addNewTask">
-                <i class="fas fa-plus text-zinc-600 text-xs pr-3"></i>
+            <p class="text-5xl font-bold pb-5">{{ props.nameOfHeading }}</p>
+            <div class="flex flex-row items-center p-2 text-sm gap-2 cursor-pointer border rounded-md" @click="addNewTask">
+                <i class="fas fa-plus text-xs pr-3"></i>
                 <p>Add New Task</p>
             </div>
-            <div class="flex flex-col justify-between" v-for="(dummyTask, index) in dummyTasks" @click="showTask(dummyTask)">
+            <div class="flex flex-col justify-between bg-gray-100 rounded-lg" v-for="(dummyTask, index) in dummyTasks" @click="showTask(dummyTask)">
                 <div class="flex flex-row justify-between cursor-pointer p-2 pb-4">
                     <div class="flex flex-row items-start gap-4">
                         <div class="p-2">
-                            <input type="checkbox" class="flex pt-2">
+                            <input type="checkbox" class="flex checkbox checkbox-ms border-black hover:border-black checked:border-black bg-white">
                         </div>
                         <div class="flex flex-col gap-2">
                             <p class="text-zinc-600 text-md">{{ dummyTask.task }}</p>
@@ -22,7 +22,7 @@
                                 </div>
                                
                                 <div v-if="dummyTask.list" class="flex flex-row gap-2 items-center">
-                                    <div :style="{ backgroundColor: dummyTask.listColor }" class="color-box rounded-sm cursor-pointer"></div>
+                                    <div :style="{ backgroundColor: dummyTask.listColor }" class="colorBox rounded-sm cursor-pointer"></div>
                                     <p class="text-zinc-600 text-sm">{{ dummyTask.list }}</p>
                                 </div>
                             </div>
@@ -98,7 +98,7 @@ const showTask = (dumTask) => {
 .customGrid{
     height: 100%
 }
-.color-box {
+.colorBox {
     width: 14px;
     height: 14px;
 }

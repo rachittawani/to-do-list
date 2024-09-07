@@ -1,5 +1,5 @@
 <template>
-    <p class="text-black">{{ selectedList.name }}</p>
+    <p>{{ selectedList.name }}</p>
 </template>
 <script setup lang="ts">
 import { ref, onBeforeMount, computed } from 'vue';

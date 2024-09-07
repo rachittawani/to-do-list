@@ -8,3 +8,11 @@ export const getData = () => {
 export const createUser = (data: any) => {
     return APIBuilder.postRequest(CONSTANTS.USER, data);
 }
+
+export const login = (data: any) => {
+    return APIBuilder.postRequestWithId(CONSTANTS.LOGIN, data);
+}
+
+export const getTodo = () => {
+    return APIBuilder.getRequestWithAuth(CONSTANTS.TODO)
+}

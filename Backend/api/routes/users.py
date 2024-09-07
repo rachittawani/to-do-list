@@ -22,7 +22,7 @@ router = APIRouter()
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 def get_user(user: user_dependency, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=401, detail='Authentication Failed')
@@ -30,7 +30,7 @@ def get_user(user: user_dependency, db: Session = Depends(get_db)):
     return get_all_user(user, db)
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 def create_users(create_user_request: CreateUserRequest, db: Session = Depends(get_db)):
     return create_user(create_user_request, db)
 

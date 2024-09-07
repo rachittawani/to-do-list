@@ -21,7 +21,7 @@ router = APIRouter()
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 def read_all(user: user_dependency, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user.")
@@ -37,7 +37,7 @@ def read_specific_todo(user: user_dependency, todo_id: int = Path(gt=0), db: Ses
     return todo_by_id
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 def create_todo(todo_data: ToDoRequest, user: user_dependency, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user.")

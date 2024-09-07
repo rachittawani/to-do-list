@@ -13,7 +13,7 @@ load_dotenv()
 
 KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv('ALGO')
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/api/auth/token')
 
 
 def create_access_token(username: str, user_uuid: UUID, role: str, expires_delta: timedelta):

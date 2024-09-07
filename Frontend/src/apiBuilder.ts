@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from 'js-cookie';
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 
 export const getRequest = (url: string): Promise<AxiosResponse> => {
@@ -23,11 +24,35 @@ export const postRequest = (url: string, data: any): Promise<AxiosResponse> => {
 	return axios.post(url, data);
 };
 
-export const postRequestWithId = (url: string): Promise<AxiosResponse> => {
+export const postRequestWithId = (url: string, data: any): Promise<AxiosResponse> => {
 	const headers = {
-		headers: { BACKEND_ID: BackendID }
-	};
-	return axios.post(url, null, headers);
+        headers:{
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    }
+	return axios.post(url, data, headers);
+};
+
+export const postRequestWithAuth = (url: string, data: any): Promise<AxiosResponse> => {
+	const token = Cookies.get('token')
+    const tokenType = Cookies.get('tokenType')
+	const headers = {
+        headers:{
+            'Authorization': tokenType + ' ' + token
+        }
+    }
+	return axios.post(url, data, headers);
+};
+
+export const getRequestWithAuth = (url: string): Promise<AxiosResponse> => {
+	const token = Cookies.get('token')
+    const tokenType = Cookies.get('tokenType')
+	const headers = {
+        headers:{
+            'Authorization': tokenType + ' ' + token
+        }
+    }
+	return axios.get(url, headers);
 };
 
 export const putRequest = (url: string, data: any): Promise<AxiosResponse> => {

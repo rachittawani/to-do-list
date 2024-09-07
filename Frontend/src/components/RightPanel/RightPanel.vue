@@ -5,7 +5,6 @@
                 <p class="text-zinc-600 font-bold text-2xl">Task:</p>
                 <i class="fas fa-times text-zinc-600 text-xl cursor-pointer" @click="closeTask"></i>
             </div>
-            <!-- <p class="text-black">{{ props.selectedTask.task }}</p> -->
             <input class="text-zinc-600 p-2 rounded-lg outline-none bg-transparent border-2" autocomplete="off" placeholder='Task' v-model.lazy="newTaskObject.task"/>
             <textarea class="text-zinc-600 p-2 rounded-lg h-1/2 outline-none h-40 bg-transparent border-2" autocomplete="off" placeholder='Description' maxlength="200" v-model="newTaskObject.description"></textarea>
             <div class="flex flex-row p-2 items-center gap-4">

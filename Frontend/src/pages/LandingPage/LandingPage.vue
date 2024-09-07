@@ -1,16 +1,22 @@
 <template>
     <div class="customGrid flex flex-row p-5 gap-4">
-        <img class="h-full w-1/2 rounded-2xl object-cover" src="/src/assets/landingPage.jpg" alt="Landing Page" >
-        <div class="flex flex-col px-28 justify-center w-1/2 h-full rounded-2xl border border-slate-950">
-            <!-- <p class="text-red-500">hello</p> -->
-            <h1 class="text-black text-center font-bold font-sans text-4xl m-5 p-2">Checklist Pro</h1>
-            <h2 class="text-black font-bold font-sans text-lg m-2">Be Productive!!!</h2>
-            <p class="flex text-justify text-gray-700 whitespace-normal font-sans m-2">Introducing our sleek webapp, a dynamic solution for your 
-                productivity needs. Seamlessly manage tasks with our intuitive to-do list feature. Stay organized with customizable 
-                categories, priorities, and due dates. Experience efficiency like never before with our user-friendly interface. 
-                Revolutionize your workflow today.</p>
-            <button type="button" class="bg-yellow-400 text-slate-800 font-bold font-sans rounded-lg flex justify-center m-2 p-2" @click="redirectToSignUp">Get Started</button>
-            <p class="flex text-gray-700 font-bold font-sans justify-center m-2">Already have an account?<button @click="redirectToLogin" class="text-red-500">&nbsp;Login</button></p>
+        <img class="h-full w-1/2 rounded-2xl object-cover border border-slate-500" src="/src/assets/landingPage.jpg" alt="Landing Page" >
+        <div class="flex flex-col px-28 justify-center w-1/2 h-full rounded-2xl border border-slate-500">
+            <h1 class="text-center font-bold font-sans text-4xl p-2">Task Tracker</h1>
+            <h2 class="text-center font-bold font-sans text-lg pb-4">Track Your Tasks, Conquer Your Goals!!!</h2>
+            <p class="flex text-justify whitespace-normal font-sans mx-2 my-5">
+                Introducing our sleek webapp, a dynamic solution for your productivity needs. Seamlessly manage tasks with our 
+                intuitive to-do list feature. Stay organized with customizable categories, priorities, and due dates. Experience 
+                efficiency like never before with our user-friendly interface. 
+            </p>
+            <div class="flex justify-center">
+                <button 
+                    type="button" 
+                    class="w-1/2 bg-amber-400 text-slate-900 font-bold font-sans rounded-lg flex justify-center m-2 p-2" 
+                    @click="redirectToSignUp">Get Started
+                </button>
+            </div>
+            <p class="flex font-bold font-sans justify-center m-2">Already have an account?<button @click="redirectToLogin" class="text-red-500">&nbsp;Login</button></p>
         </div>
     </div>
 </template>

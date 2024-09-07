@@ -6,7 +6,7 @@
                 <i class="fas fa-bars text-zinc-600 cursor-pointer" @click="toggleMenu"></i>
             </div>
             <div class="relative">
-                <input type="text" name="search" class="p-2 m-2 bg-white outline-none rounded-lg w-full pr-10 input-field text-black" placeholder="Search"/>
+                <input type="text" name="search" class="p-2 m-2 bg-white outline-none rounded-lg w-full pr-10 input-field" placeholder="Search"/>
                 <i class="fas fa-search text-slate-700 absolute right-5 top-2" style="top: 50%; transform: translateY(-50%);"></i>
             </div>
             <h5 class="text-zinc-600 px-3 text-xs font-bold">TASKS</h5>
@@ -62,8 +62,10 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import ColorPalette from '../ColorPalette/ColorPalette.vue'
-import { List } from '../../models/list.ts'
+import { List } from '../../models/list'
 import { defineEmits } from 'vue';
+import Cookies from 'js-cookie';
+import { getTodo } from '../../utils/apiService/index';
 
 const router = useRouter();
 const emit = defineEmits(['toggleSidePanel']);
@@ -134,13 +136,29 @@ const redirectToSettings = () => {
     activeTab.value = 'settings'
 }
 const redirectToLogin = () => {
+    Cookies.remove('token')
+    Cookies.remove('tokenType')
     router.push("/login")
 }
 const selectedList = (selectedData: any) => {
     activeTab.value = selectedData.name
     router.push("/home/" + selectedData.id)
 }
+const getTodoDataForUser = async () => {
+    try{
+        const response = await getTodo();
+        const status:number = response.status;
+        const payload = response.data
+        console.log(payload)
+        if (status == 200){
+            router.push("/home")
+        } 
+    } catch (error: any) {
+        console.log(error)
+    }
+}
 onMounted(() => {
+    getTodoDataForUser()
     const data = JSON.parse(localStorage.getItem('listObject'))
     if(data!=undefined) {
         listObject.value = data;
