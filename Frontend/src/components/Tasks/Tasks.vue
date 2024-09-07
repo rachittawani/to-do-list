@@ -2,15 +2,17 @@
     <div class="customGrid flex flex-row gap-2">
         <div class="flex flex-col gap-3 px-2" :class="rightToggle == true ? 'w-2/3': 'w-full'">
             <p class="text-5xl font-bold pb-5">{{ props.nameOfHeading }}</p>
-            <div class="flex flex-row items-center p-2 text-sm gap-2 cursor-pointer border rounded-md" @click="addNewTask">
-                <i class="fas fa-plus text-xs pr-3"></i>
-                <p>Add New Task</p>
+            <div class="flex">
+                <button class="btn btn-wide rounded-lg border border-black cursor-pointer bg-gray-100 text-zinc-600 hover:bg-gray-300" @click="addNewTask">
+                    <i class="fas fa-plus text-xs"></i>
+                    <span class="text-sm">Add New Task</span>
+                </button>
             </div>
-            <div class="flex flex-col justify-between bg-gray-100 rounded-lg" v-for="(dummyTask, index) in dummyTasks" @click="showTask(dummyTask)">
+            <div class="flex flex-col justify-between bg-gray-100 rounded-lg border border-black" v-for="(dummyTask, index) in dummyTasks" @click="showTask(dummyTask)">
                 <div class="flex flex-row justify-between cursor-pointer p-2 pb-4">
                     <div class="flex flex-row items-start gap-4">
                         <div class="p-2">
-                            <input type="checkbox" class="flex checkbox checkbox-ms border-black hover:border-black checked:border-black bg-white">
+                            <input type="checkbox" class="flex checkbox checkbox-ms border-black hover:border-black checked:border-black">
                         </div>
                         <div class="flex flex-col gap-2">
                             <p class="text-zinc-600 text-md">{{ dummyTask.task }}</p>
@@ -47,13 +49,10 @@ import { ref, defineProps, onMounted, computed } from 'vue';
 import RightPanel from '../RightPanel/RightPanel.vue'
 // import { dummyTasks } from '../../utils/Dummy'
 import { Task } from '../../models/task.ts'
-import { storeKey } from '../../store/store'
-import { useStore } from 'vuex'
 
 const rightToggle = ref<boolean>(false)
 const taskSelected = ref<Task>({})
 const props = defineProps(['nameOfHeading']);
-const store = useStore(storeKey)
 const dummyTasks = ref<Array<Task>>([])
 
 onMounted(() => {

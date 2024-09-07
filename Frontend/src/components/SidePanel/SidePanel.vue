@@ -1,18 +1,18 @@
 <template>
-    <div v-if="toggle" class="flex flex-col bg-gray-100 rounded-lg h-full w-1/5 p-2 justify-between">
+    <div v-if="toggle" class="flex flex-col bg-gray-100 rounded-lg h-full w-1/5 p-2 justify-between border border-black overflow-y-scroll">
         <div class="flex flex-col gap-3">
             <div class="flex flex-row justify-between p-2 items-center">
-                <h1 class="text-2xl text-zinc-600 font-sans font-bold">Menu</h1>
-                <i class="fas fa-bars text-zinc-600 cursor-pointer" @click="toggleMenu"></i>
+                <h1 class="text-2xl text-zinc-700 font-sans font-bold">Menu</h1>
+                <i class="fas fa-bars text-zinc-700 cursor-pointer" @click="toggleMenu"></i>
             </div>
             <div class="relative">
-                <input type="text" name="search" class="p-2 m-2 bg-white outline-none rounded-lg w-full pr-10 input-field" placeholder="Search"/>
+                <input type="text" name="search" class="p-2 m-2 bg-white outline-none rounded-lg w-full pr-10 input-field border border-black" placeholder="Search"/>
                 <i class="fas fa-search text-slate-700 absolute right-5 top-2" style="top: 50%; transform: translateY(-50%);"></i>
             </div>
-            <h5 class="text-zinc-600 px-3 text-xs font-bold">TASKS</h5>
+            <h5 class="text-zinc-700 px-3 text-xs font-bold">TASKS</h5>
             <div>
                 <ul class="flex flex-col gap-1 w-full rounded-box">
-                    <li v-for="(tab, index) in tabs" :key="index" class="cursor-pointer rounded-lg p-2 hover:bg-gray-200 hover:text-zinc-700" :class="tab.value === activeTab ? 'bg-gray-300 text-zinc-900' : 'text-zinc-600'" @click="setActiveTab(tab.value)">
+                    <li v-for="(tab, index) in tabs" :key="index" class="cursor-pointer rounded-lg p-2 hover:bg-gray-200 hover:text-zinc-700" :class="tab.value === activeTab ? 'bg-gray-300 text-zinc-900' : 'text-zinc-700'" @click="setActiveTab(tab.value)">
                         <span class="px-2 gap-3">
                             <i class="pl-2 pr-3 text-xs" :class="tab.icon"></i>{{tab.name}}
                         </span>
@@ -20,17 +20,17 @@
                 </ul>
             </div>
             <hr class="flex border-zinc-300">
-            <h5 class="text-zinc-600 px-3 text-xs font-bold">LISTS</h5>
+            <h5 class="text-zinc-700 px-3 text-xs font-bold">LISTS</h5>
             <div class="overflow-y-scroll overflow-x-hidden h-44">
                 <div>
-                    <h1 class="text-zinc-600 px-3 text-sm gap-2 cursor-pointer" @click="addNewList">
-                        <i class="fas fa-plus text-zinc-600 text-xs pr-1"></i> Add New List
+                    <h1 class="text-zinc-700 px-3 text-sm gap-2 cursor-pointer" @click="addNewList">
+                        <i class="fas fa-plus text-zinc-700 text-xs pr-1"></i> Add New List
                     </h1>
                     <div v-if="listOpen" class="flex flex-col border border-black rounded-md p-2 pt-6 relative">
-                        <i class="fas fa-times text-zinc-600 text-xs absolute top-2 right-2 cursor-pointer" @click="closeList"></i>
+                        <i class="fas fa-times text-zinc-700 text-xs absolute top-2 right-2 cursor-pointer" @click="closeList"></i>
                         <div class="flex flex-row px-2 gap-2 border rounded-md items-center">
                             <div class="color-box rounded-sm cursor-pointer p-2" :style="{ backgroundColor: colorSelected }"></div>
-                            <input type="text" name="list" autocomplete="off" class="w-full text-zinc-600 p-2 bg-transparent focus:outline-none text-sm" placeholder="List" v-model="listName" @keypress.enter="listDetails"/>  
+                            <input type="text" name="list" autocomplete="off" class="w-full text-zinc-700 p-2 bg-transparent focus:outline-none text-sm" placeholder="List" v-model="listName" @keypress.enter="listDetails"/>  
                         </div>
                         <ColorPalette @customColor="clickedColor"/>
                     </div>
@@ -38,24 +38,24 @@
                 <ul class="flex flex-col gap-2 pt-2">
                     <li class="flex flex-row gap-2 items-center pl-4 cursor-pointer rounded-lg hover:bg-gray-200 hover:text-zinc-700" :class="activeTab === data.name ? 'bg-gray-300 text-zinc-900' : ''" v-for="(data, index) in listObject" :key="data.id" @click="selectedList(data)">
                         <div class="small-box rounded-sm p-2 h-1/2 " :style="{ backgroundColor: data.hexCode }"></div>
-                        <p class="text-zinc-600 p-2">{{ data.name }}</p>
+                        <p class="text-zinc-700 p-2">{{ data.name }}</p>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="flex flex-col">
-            <div class="flex flex-row p-2 gap-2 items-center cursor-pointer rounded-lg hover:bg-gray-200 hover:text-zinc-700" @click="redirectToSettings" :class="activeTab === 'settings' ? 'bg-gray-300 text-zinc-900' : 'text-zinc-600'">
-                <i class="fas fa-sliders-h text-zinc-600 text-xs"></i>
-                <p>Settings</p>
+            <div class="flex flex-row p-2 gap-2 items-center cursor-pointer rounded-lg hover:bg-gray-200 hover:text-zinc-700" @click="redirectToSettings" :class="activeTab === 'profile' ? 'bg-gray-300 text-zinc-900' : 'text-zinc-700'">
+                <i class="fas fa-user text-zinc-700 text-xs"></i>
+                <p>Profile</p>
             </div>
             <div class="flex flex-row p-2 gap-2 items-center cursor-pointer hover:bg-gray-200 hover:text-zinc-700" @click="redirectToLogin">
-                <i class="fas fa-sign-out-alt text-zinc-600 text-xs"></i>
-                <p class="text-zinc-600">Logout</p>
+                <i class="fas fa-sign-out-alt text-zinc-700 text-xs"></i>
+                <p class="text-zinc-700">Logout</p>
             </div>
         </div>
     </div>
     <div v-else class="p-2">
-        <i class="fas fa-bars text-zinc-600 m-2 cursor-pointer" @click="toggleMenu"></i>
+        <i class="fas fa-bars text-zinc-700 m-2 cursor-pointer" @click="toggleMenu"></i>
     </div>
 </template>
 <script setup lang="ts">
@@ -132,8 +132,8 @@ const listDetails = () => {
     colorSelected.value = '#000000'
 }
 const redirectToSettings = () => {
-    router.push("/home/settings")
-    activeTab.value = 'settings'
+    router.push("/home/profile")
+    activeTab.value = 'profile'
 }
 const redirectToLogin = () => {
     Cookies.remove('token')

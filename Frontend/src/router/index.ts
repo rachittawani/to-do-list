@@ -37,9 +37,9 @@ export const routes: Array<RouteRecordRaw> = [
                 component: () => import("../pages/StickyWall/StickyWall.vue"),
             },
             {
-                path: "/home/settings",
-                name: "settings",
-                component: () => import("../pages/Settings/Settings.vue"),
+                path: "/home/profile",
+                name: "profile",
+                component: () => import("../pages/Profile/Profile.vue"),
             },
             {
                 path: "/home/:id",

@@ -1,27 +1,32 @@
 <template>
-    <div class="flex flex-col justify-between bg-gray-100 rounded-lg h-full">
+    <div class="flex flex-col justify-between bg-gray-100 rounded-lg h-full border border-black overflow-y-scroll">
         <div class="flex flex-col pt-3 px-5 gap-3">
             <div class="flex flex-row justify-between items-center">
-                <p class="text-zinc-600 font-bold text-2xl">Task:</p>
-                <i class="fas fa-times text-zinc-600 text-xl cursor-pointer" @click="closeTask"></i>
+                <p class="text-zinc-700 font-bold text-2xl">Task:</p>
+                <i class="fas fa-times text-zinc-700 text-xl cursor-pointer" @click="closeTask"></i>
             </div>
-            <input class="text-zinc-600 p-2 rounded-lg outline-none bg-transparent border-2" autocomplete="off" placeholder='Task' v-model.lazy="newTaskObject.task"/>
-            <textarea class="text-zinc-600 p-2 rounded-lg h-1/2 outline-none h-40 bg-transparent border-2" autocomplete="off" placeholder='Description' maxlength="200" v-model="newTaskObject.description"></textarea>
+            <input class="text-zinc-700 p-2 rounded-lg bg-transparent border border-black" autocomplete="off" placeholder='Task' v-model.lazy="newTaskObject.task"/>
+            <textarea class="text-zinc-700 p-2 rounded-lg h-1/2 h-40 bg-transparent border border-black" autocomplete="off" placeholder='Description' maxlength="200" v-model="newTaskObject.description"></textarea>
             <div class="flex flex-row p-2 items-center gap-4">
-                <p class="text-zinc-600 pr-10">List</p>
-                <select class="w-1/2 border rounded-lg bg-transparent text-zinc-600 p-2 outline-none" @change="setList($event)">
-                    <option class="text-zinc-600 bg-gray-100" v-if="listObject.length === 0 || newTaskObject.list == ''" value="Select" selected>Select</option>
-                    <option class="text-zinc-600 bg-gray-100" v-for="list in listObject" :key="list" :selected="list.name == newTaskObject.list">{{ list.name }}</option>
+                <p class="text-zinc-700 pr-10">List</p>
+                <select class="w-1/2 rounded-lg bg-transparent text-zinc-700 p-2 border border-black outline-none" @change="setList($event)">
+                    <option class="text-zinc-700 bg-gray-100" v-if="listObject.length === 0 || newTaskObject.list == ''" value="Select" selected>Select</option>
+                    <option class="text-zinc-700 bg-gray-100" v-for="list in listObject" :key="list" :selected="list.name == newTaskObject.list">{{ list.name }}</option>
                 </select>
             </div>
-            <div class="flex flex-row p-2 items-center gap-4">
-                <p class="text-zinc-600">Due Date</p>
-                <input type="date" class="w-1/2 border rounded-lg bg-transparent text-zinc-600 p-2 outline-none cursor-pointer"  v-model="newTaskObject.dueDate"/>
+            <div class="flex flex-row p-2 items-center gap-4 ">
+                <p class="text-zinc-700">Due Date</p>
+                <input 
+                    type="date" 
+                    class="w-1/2 rounded-lg bg-transparent text-zinc-700 p-2 cursor-pointer border border-black outline-none"  
+                    v-model="newTaskObject.dueDate"
+                />
             </div>
         </div>
         <div class="flex flex-row justify-between p-4 gap-4">
-            <button class="bg-transparent text-zinc-600 border-2 rounded-lg p-2 w-1/2 hover:bg-gray-300 hover:text-zinc-700">Delete Task</button>
-            <button class="bg-yellow-400 text-zinc-600 border rounded-lg p-2 w-1/2 hover:bg-yellow-500 hover:text-zinc-700" @click="taskUpdated">Save Changes</button>
+            <button class="bg-transparent text-zinc-700 rounded-lg p-2 w-1/2 border border-black hover:bg-gray-300 hover:text-zinc-700">Delete Task</button>
+            <button class="bg-slate-800 text-white border border-black rounded-lg p-2 w-1/2 hover:bg-slate-900 transition" @click="taskUpdated">Save Changes</button>
+             <!-- px-4 py-2 rounded-lg hover:bg-slate-900 transition -->
         </div>
     </div>
 </template>
@@ -125,5 +130,8 @@ onMounted(() => {
 <style scoped>
 textarea {
     resize: none;
+}
+::-webkit-calendar-picker-indicator {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%23000000" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
 }
 </style>

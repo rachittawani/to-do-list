@@ -29,6 +29,7 @@
                         <i :class="isPasswordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                     </button>
                 </div>
+                <span v-if="error" class="text-red-500 flex justify-center my-1">{{ error }}</span>
                 <div class="flex justify-center">
                     <button 
                         type="button" 
