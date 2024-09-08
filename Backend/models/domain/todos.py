@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, PickleType, Date, ForeignKey
 from fastapi_utils.guid_type import GUID
 
 from db import Base
-from .associations import owner_uuid_fk
+# from .associations import owner_uuid_fk
 
 class TodosORM(Base):
     __tablename__ = 'todos'
@@ -12,4 +12,6 @@ class TodosORM(Base):
     description = Column(String)
     priority = Column(Integer)
     complete = Column(Boolean, default=False)
-    owner_uuid = Column(GUID, owner_uuid_fk)
+    due_date = Column(Date)
+    list_details_uuid = Column(GUID, ForeignKey('link.uuid'), nullable=True)
+    owner_uuid = Column(GUID, ForeignKey('users.uuid'))
