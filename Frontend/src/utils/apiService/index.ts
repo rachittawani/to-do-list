@@ -22,7 +22,7 @@ export const updatePassword = (data: any) => {
 }
 
 export const createLink = (data: any) => {
-    return APIBuilder.postRequest(CONSTANTS.TAG, data);
+    return APIBuilder.postRequestWithAuth(CONSTANTS.TAG, data);
 }
 
 export const readLink = () => {

@@ -36,9 +36,16 @@
                     </div>
                 </div>
                 <ul class="flex flex-col gap-2 pt-2">
-                    <li class="flex flex-row gap-2 items-center pl-4 cursor-pointer rounded-lg hover:bg-gray-200 hover:text-zinc-700" :class="activeTab === data.name ? 'bg-gray-300 text-zinc-900' : ''" v-for="(data, index) in listObject" :key="data.id" @click="selectedList(data)">
-                        <div class="small-box rounded-sm p-2 h-1/2 " :style="{ backgroundColor: data.hex_color }"></div>
-                        <p class="text-zinc-700 p-2">{{ data.name }}</p>
+                    <li class="flex flex-row gap-2 items-center justify-between pl-4 cursor-pointer rounded-lg"  v-for="(data) in listObject">
+                        <div class="flex flex-row gap-2 items-center">
+                            <div class="small-box rounded-sm p-2 h-1/2 " :style="{ backgroundColor: data.hex_color }"></div>
+                            <p class="text-zinc-700 p-2">{{ data.name }}</p>
+                        </div>
+                        <div class="items-center">
+                            <button class="btn bg-transparent border-none hover:bg-transparent hover:border-none p-0" style="height: 0; min-height: 0;" @click="deleteLinks(data.uuid)">
+                                <i class="fas fa-trash-alt text-black"></i>
+                            </button>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -65,7 +72,7 @@ import ColorPalette from '../ColorPalette/ColorPalette.vue'
 import { List } from '../../models/list'
 import { defineEmits } from 'vue';
 import Cookies from 'js-cookie';
-import { getTodo, readLink } from '../../utils/apiService/index';
+import { getTodo, readLink, createLink, deleteLink } from '../../utils/apiService/index';
 
 const router = useRouter();
 const emit = defineEmits(['toggleSidePanel']);
@@ -116,20 +123,41 @@ const addNewList = () => {
 const closeList = () => {
     listOpen.value = false
 }
-const clickedColor = (data:any) => {
+const clickedColor = (data: any) => {
     colorSelected.value = data.hexCode
 }
-const listDetails = () => {
-    const newList = {
-        id: listObject.value.length + 1,
-        name: listName.value,
-        hexCode: colorSelected.value
+const deleteLinks = async(uuid: any) => {
+    console.log(uuid)
+    try{
+        const response = await deleteLink(uuid);
+        const status:number = response.status;
+        console.log("tag created")
+        if (status == 204){
+            readLinkTags()
+        } 
+    } catch (error: any) {
+        console.log(error)
     }
-    listObject.value.push(newList)
-    localStorage.setItem('listObject',JSON.stringify(listObject.value))
-    listOpen.value = false
-    listName.value = ''
-    colorSelected.value = '#000000'
+}
+const listDetails = async() => {
+    const newList = {
+        name: listName.value,
+        hex_color: colorSelected.value
+    }
+    console.log("newList", newList)
+    try{
+        const response = await createLink(newList);
+        const status:number = response.status;
+        console.log("tag created")
+        if (status == 201){
+            listOpen.value = false
+            listName.value = ''
+            colorSelected.value = '#000000'
+            readLinkTags()
+        } 
+    } catch (error: any) {
+        console.log(error)
+    }
 }
 const redirectToSettings = () => {
     router.push("/home/profile")
@@ -139,10 +167,6 @@ const redirectToLogin = () => {
     Cookies.remove('token')
     Cookies.remove('tokenType')
     router.push("/login")
-}
-const selectedList = (selectedData: any) => {
-    activeTab.value = selectedData.name
-    router.push("/home/" + selectedData.id)
 }
 const getTodoDataForUser = async () => {
     try{
@@ -162,7 +186,7 @@ const readLinkTags = async() => {
         const response = await readLink();
         const status:number = response.status;
         const payload = response.data
-        console.log("linkTags",payload)
+        // console.log("linkTags",payload)
         if (status == 200){
             if(payload!=undefined) {
                 listObject.value = payload;
@@ -179,13 +203,6 @@ const readLinkTags = async() => {
 onMounted(() => {
     getTodoDataForUser()
     readLinkTags()
-    // const data = JSON.parse(localStorage.getItem('listObject'))
-    // if(data!=undefined) {
-    //     listObject.value = data;
-    // }
-    // else {
-    //     listObject.value = []
-    // }
 })
 </script>
 <style scoped>
