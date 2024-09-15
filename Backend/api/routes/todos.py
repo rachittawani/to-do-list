@@ -28,12 +28,12 @@ def read_all(user: user_dependency, db: Session = Depends(get_db)):
     return read_todo(user, db)
 
 
-@router.get("/{todo_id}", status_code=status.HTTP_200_OK)
-def read_specific_todo(user: user_dependency, todo_id: int = Path(gt=0), db: Session = Depends(get_db)):
+@router.get("/{todo_uuid}", status_code=status.HTTP_200_OK)
+def read_specific_todo(user: user_dependency, todo_uuid: str, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user.")
 
-    todo_by_id = read_todo_by_id(user, todo_id, db)
+    todo_by_id = read_todo_by_id(user, todo_uuid, db)
     return todo_by_id
 
 
@@ -44,18 +44,18 @@ def create_todo(todo_data: ToDoRequest, user: user_dependency, db: Session = Dep
     return create_todo_task(todo_data, UUID(user.get('uuid')), db)
 
 
-@router.put("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.put("/{todo_uuid}", status_code=status.HTTP_204_NO_CONTENT)
 def update_todo(todo_data: ToDoRequest,
                 user: user_dependency,
-                todo_id: int = Path(gt=0),
+                todo_uuid: str,
                 db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user.")
-    return update_todo_task(todo_data, user, todo_id, db)
+    return update_todo_task(todo_data, user, todo_uuid, db)
 
 
-@router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_todo(user: user_dependency, todo_id: int = Path(gt=0), db: Session = Depends(get_db)):
+@router.delete("/{todo_uuid}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_todo(user: user_dependency, todo_uuid: str, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user.")
-    return delete_todo_task(user, todo_id, db)
+    return delete_todo_task(user, todo_uuid, db)

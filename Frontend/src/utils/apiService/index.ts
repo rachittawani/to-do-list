@@ -20,3 +20,15 @@ export const getTodo = () => {
 export const updatePassword = (data: any) => {
     return APIBuilder.putRequestWithAuth(CONSTANTS.UPDATEPASSWORD, data)
 }
+
+export const createLink = (data: any) => {
+    return APIBuilder.postRequest(CONSTANTS.TAG, data);
+}
+
+export const readLink = () => {
+    return APIBuilder.getRequestWithAuth(CONSTANTS.TAG)
+}
+
+export const deleteLink = (data: any) => {
+    return APIBuilder.deleteRequestWithAuth(CONSTANTS.TAG, data)
+}

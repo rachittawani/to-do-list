@@ -37,7 +37,7 @@
                 </div>
                 <ul class="flex flex-col gap-2 pt-2">
                     <li class="flex flex-row gap-2 items-center pl-4 cursor-pointer rounded-lg hover:bg-gray-200 hover:text-zinc-700" :class="activeTab === data.name ? 'bg-gray-300 text-zinc-900' : ''" v-for="(data, index) in listObject" :key="data.id" @click="selectedList(data)">
-                        <div class="small-box rounded-sm p-2 h-1/2 " :style="{ backgroundColor: data.hexCode }"></div>
+                        <div class="small-box rounded-sm p-2 h-1/2 " :style="{ backgroundColor: data.hex_color }"></div>
                         <p class="text-zinc-700 p-2">{{ data.name }}</p>
                     </li>
                 </ul>
@@ -65,7 +65,7 @@ import ColorPalette from '../ColorPalette/ColorPalette.vue'
 import { List } from '../../models/list'
 import { defineEmits } from 'vue';
 import Cookies from 'js-cookie';
-import { getTodo } from '../../utils/apiService/index';
+import { getTodo, readLink } from '../../utils/apiService/index';
 
 const router = useRouter();
 const emit = defineEmits(['toggleSidePanel']);
@@ -149,7 +149,7 @@ const getTodoDataForUser = async () => {
         const response = await getTodo();
         const status:number = response.status;
         const payload = response.data
-        console.log(payload)
+        console.log("todo",payload)
         if (status == 200){
             router.push("/home")
         } 
@@ -157,15 +157,35 @@ const getTodoDataForUser = async () => {
         console.log(error)
     }
 }
+const readLinkTags = async() => {
+    try{
+        const response = await readLink();
+        const status:number = response.status;
+        const payload = response.data
+        console.log("linkTags",payload)
+        if (status == 200){
+            if(payload!=undefined) {
+                listObject.value = payload;
+                console.log(listObject.value)
+            }
+            else {
+                listObject.value = []
+            }
+        } 
+    } catch (error: any) {
+        console.log(error)
+    }
+}
 onMounted(() => {
     getTodoDataForUser()
-    const data = JSON.parse(localStorage.getItem('listObject'))
-    if(data!=undefined) {
-        listObject.value = data;
-    }
-    else {
-        listObject.value = []
-    }
+    readLinkTags()
+    // const data = JSON.parse(localStorage.getItem('listObject'))
+    // if(data!=undefined) {
+    //     listObject.value = data;
+    // }
+    // else {
+    //     listObject.value = []
+    // }
 })
 </script>
 <style scoped>

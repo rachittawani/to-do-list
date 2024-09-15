@@ -90,7 +90,7 @@ export const deleteRequestWithAuth = (url: string, data: any): Promise<AxiosResp
 		data: data
 	};
 
-	return axios.delete(url, config);
+	return axios.delete(url + '/' + data, config);
 };
 
 // export const deleteRequestWithData = (url: string, data: any): Promise<AxiosResponse> => {

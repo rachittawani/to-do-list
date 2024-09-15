@@ -4,7 +4,6 @@ from uuid import UUID
 
 from models.domain.todos import TodosORM
 from models.domain.link import LinkORM
-
 from models.schemas.todos import ToDoRequest
 
 
@@ -23,7 +22,7 @@ def read_todo(user, db: Session):
     for todo, name, hex_color in joined_data:
         todo_dict = {
             "title": todo.title,
-            "id": todo.id,
+            "uuid": todo.uuid,
             "priority": todo.priority,
             "due_date": todo.due_date,
             "complete": todo.complete,
@@ -39,9 +38,9 @@ def read_todo(user, db: Session):
     return response_data
 
 
-def read_todo_by_id(user, todo_id: int, db: Session):
+def read_todo_by_id(user, todo_uuid: str, db: Session):
     todo_response = (db.query(TodosORM).filter(TodosORM.owner_uuid == UUID(user.get('uuid')))
-                     .filter(TodosORM.id == todo_id).first())
+                     .filter(TodosORM.uuid == todo_uuid).first())
     if todo_response is None:
         raise HTTPException(status_code=404, detail="To do not found.")
 
@@ -49,7 +48,7 @@ def read_todo_by_id(user, todo_id: int, db: Session):
         db.query(TodosORM, LinkORM.name, LinkORM.hex_color)
         .outerjoin(LinkORM, TodosORM.list_details_uuid == LinkORM.uuid)
         .filter(TodosORM.owner_uuid == UUID(user.get('uuid')))
-        .filter(TodosORM.id == todo_id)
+        .filter(TodosORM.uuid == todo_uuid)
         .all()
     )
 
@@ -57,7 +56,7 @@ def read_todo_by_id(user, todo_id: int, db: Session):
     for todo, name, hex_color in joined_data:
         todo_dict = {
             "title": todo.title,
-            "id": todo.id,
+            "uuid": todo.uuid,
             "priority": todo.priority,
             "due_date": todo.due_date,
             "complete": todo.complete,
@@ -80,9 +79,9 @@ def create_todo_task(data: ToDoRequest, uuid: UUID, db: Session):
     db.commit()
 
 
-def update_todo_task(data: ToDoRequest, user, todo_id: int, db: Session):
+def update_todo_task(data: ToDoRequest, user, todo_uuid: str, db: Session):
     todo_response = (db.query(TodosORM).filter(TodosORM.owner_uuid == UUID(user.get('uuid')))
-                     .filter(TodosORM.id == todo_id).first())
+                     .filter(TodosORM.uuid == todo_uuid).first())
     if todo_response is None:
         raise HTTPException(status_code=404, detail="To do data found.")
 
@@ -95,11 +94,11 @@ def update_todo_task(data: ToDoRequest, user, todo_id: int, db: Session):
     db.commit()
 
 
-def delete_todo_task(user, todo_id: int, db: Session):
+def delete_todo_task(user, todo_uuid: str, db: Session):
     todo_response = (db.query(TodosORM).filter(TodosORM.owner_uuid == UUID(user.get('uuid')))
-                     .filter(TodosORM.id == todo_id).first())
+                     .filter(TodosORM.uuid == todo_uuid).first())
     if todo_response is None:
         raise HTTPException(status_code=404, detail="No data found.")
 
-    db.query(TodosORM).filter(TodosORM.owner_uuid == UUID(user.get('uuid'))).filter(TodosORM.id == todo_id).delete()
+    db.query(TodosORM).filter(TodosORM.owner_uuid == UUID(user.get('uuid'))).filter(TodosORM.uuid == todo_uuid).delete()
     db.commit()

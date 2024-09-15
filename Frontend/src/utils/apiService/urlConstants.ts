@@ -8,10 +8,12 @@ const LOGIN = BASE_URL + '/auth/token'
 
 const TODO = BASE_URL + '/todo'
 
+const TAG = BASE_URL + '/link'
 
 export {
     USER,
     UPDATEPASSWORD,
     LOGIN,
-    TODO
+    TODO,
+    TAG
 }
