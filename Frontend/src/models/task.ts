@@ -1,8 +1,8 @@
 export type Task = {
-    id: number;
-    task: string;
+    title: string;
     description: string;
-    list: string;
-    listColor: string;
-    dueDate: string;
+    priority: number;
+    list_details_uuid: string;
+    due_date: string;
+    complete: boolean
 }

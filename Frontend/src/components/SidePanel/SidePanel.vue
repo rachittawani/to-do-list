@@ -3,7 +3,7 @@
         <div class="flex flex-col gap-3">
             <div class="flex flex-row justify-between p-2 items-center">
                 <h1 class="text-2xl text-zinc-700 font-sans font-bold">Menu</h1>
-                <i class="fas fa-bars text-zinc-700 cursor-pointer" @click="toggleMenu"></i>
+                <i class="fas fa-times text-zinc-700 text-xl cursor-pointer" @click="toggleMenu"></i>
             </div>
             <div class="relative">
                 <input type="text" name="search" class="p-2 m-2 bg-white outline-none rounded-lg w-full pr-10 input-field border border-black" placeholder="Search"/>
@@ -62,7 +62,7 @@
         </div>
     </div>
     <div v-else class="p-2">
-        <i class="fas fa-bars text-zinc-700 m-2 cursor-pointer" @click="toggleMenu"></i>
+        <i class="fas fa-bars text-zinc-500 m-2 cursor-pointer" @click="toggleMenu"></i>
     </div>
 </template>
 <script setup lang="ts">
@@ -72,7 +72,7 @@ import ColorPalette from '../ColorPalette/ColorPalette.vue'
 import { List } from '../../models/list'
 import { defineEmits } from 'vue';
 import Cookies from 'js-cookie';
-import { getTodo, readLink, createLink, deleteLink } from '../../utils/apiService/index';
+import { readLink, createLink, deleteLink } from '../../utils/apiService/index';
 
 const router = useRouter();
 const emit = defineEmits(['toggleSidePanel']);
@@ -148,7 +148,6 @@ const listDetails = async() => {
     try{
         const response = await createLink(newList);
         const status:number = response.status;
-        console.log("tag created")
         if (status == 201){
             listOpen.value = false
             listName.value = ''
@@ -168,19 +167,6 @@ const redirectToLogin = () => {
     Cookies.remove('tokenType')
     router.push("/login")
 }
-const getTodoDataForUser = async () => {
-    try{
-        const response = await getTodo();
-        const status:number = response.status;
-        const payload = response.data
-        console.log("todo",payload)
-        if (status == 200){
-            router.push("/home")
-        } 
-    } catch (error: any) {
-        console.log(error)
-    }
-}
 const readLinkTags = async() => {
     try{
         const response = await readLink();
@@ -189,8 +175,9 @@ const readLinkTags = async() => {
         // console.log("linkTags",payload)
         if (status == 200){
             if(payload!=undefined) {
+                router.push("/home")
                 listObject.value = payload;
-                console.log(listObject.value)
+                localStorage.setItem('listObject', JSON.stringify(listObject.value))
             }
             else {
                 listObject.value = []
@@ -201,7 +188,6 @@ const readLinkTags = async() => {
     }
 }
 onMounted(() => {
-    getTodoDataForUser()
     readLinkTags()
 })
 </script>

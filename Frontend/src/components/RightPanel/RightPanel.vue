@@ -5,127 +5,144 @@
                 <p class="text-zinc-700 font-bold text-2xl">Task:</p>
                 <i class="fas fa-times text-zinc-700 text-xl cursor-pointer" @click="closeTask"></i>
             </div>
-            <input class="text-zinc-700 p-2 rounded-lg bg-transparent border border-black" autocomplete="off" placeholder='Task' v-model.lazy="newTaskObject.task"/>
+            <input class="text-zinc-700 p-2 rounded-lg bg-transparent border border-black" autocomplete="off" placeholder='Task' v-model.lazy="newTaskObject.title"/>
             <textarea class="text-zinc-700 p-2 rounded-lg h-1/2 h-40 bg-transparent border border-black" autocomplete="off" placeholder='Description' maxlength="200" v-model="newTaskObject.description"></textarea>
             <div class="flex flex-row p-2 items-center gap-4">
-                <p class="text-zinc-700 pr-10">List</p>
-                <select class="w-1/2 rounded-lg bg-transparent text-zinc-700 p-2 border border-black outline-none" @change="setList($event)">
-                    <option class="text-zinc-700 bg-gray-100" v-if="listObject.length === 0 || newTaskObject.list == ''" value="Select" selected>Select</option>
-                    <option class="text-zinc-700 bg-gray-100" v-for="list in listObject" :key="list" :selected="list.name == newTaskObject.list">{{ list.name }}</option>
+                <p class="text-zinc-700">List</p>
+                <select class="w-1/2 rounded-lg bg-transparent text-zinc-700 p-2 border border-black outline-none" v-model="selectedList">
+                    <option class="text-zinc-700 bg-gray-100" value="Select" selected>Select</option>
+                    <option class="text-zinc-700 bg-gray-100" v-for="list in listObject" :key="list.uuid" :value="list.uuid">{{ list.name }}</option>
                 </select>
             </div>
-            <div class="flex flex-row p-2 items-center gap-4 ">
+            <div class="flex flex-row p-2 items-center gap-4">
+                <p class="text-zinc-700">Priority</p>
+                <!-- {{ rangeValue }} -->
+                <div class="flex flex-col w-full">
+                    <input type="range" min="0" max="100" v-model="rangeValue" class="range" step="25" />
+                    <div class="flex w-full justify-between p-2 text-zinc-700">
+                    <span v-for="n in 5" :key="n">
+                        {{ n }}
+                    </span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row p-2 items-center gap-4">
                 <p class="text-zinc-700">Due Date</p>
                 <input 
                     type="date" 
                     class="w-1/2 rounded-lg bg-transparent text-zinc-700 p-2 cursor-pointer border border-black outline-none"  
-                    v-model="newTaskObject.dueDate"
+                    v-model="newTaskObject.due_date"
                 />
             </div>
         </div>
         <div class="flex flex-row justify-between p-4 gap-4">
-            <button class="bg-transparent text-zinc-700 rounded-lg p-2 w-1/2 border border-black hover:bg-gray-300 hover:text-zinc-700">Delete Task</button>
-            <button class="bg-slate-800 text-white border border-black rounded-lg p-2 w-1/2 hover:bg-slate-900 transition" @click="taskUpdated">Save Changes</button>
-             <!-- px-4 py-2 rounded-lg hover:bg-slate-900 transition -->
+            <button class="bg-transparent text-zinc-700 rounded-lg p-2 w-1/2 border border-black hover:bg-gray-300 hover:text-zinc-700" v-if="selectedTaskUuid" @click="deleteTask">Delete Task</button>
+            <button class="bg-slate-800 text-white border border-black rounded-lg p-2 hover:bg-slate-900 transition" :class="selectedTaskUuid ? 'w-1/2' : 'w-full'" @click="taskUpdated">Save Changes</button>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import { computed, defineEmits, defineProps, onBeforeMount, onMounted, ref } from 'vue';
-import { List, Task } from '../../models/list.ts'
+import { computed, defineEmits, defineProps, onBeforeMount, onMounted, ref, watch } from 'vue';
+import { List } from '../../models/list.ts'
+import { Task } from '../../models/task.ts';
 import { storeKey } from '../../store/store'
 import { useStore } from 'vuex'
+import { createTodo, changeTodo, deleteTodo } from '../../utils/apiService/index';
 
 const emit = defineEmits(['taskClosed']);
 const props = defineProps(['selectedTask']);
-const listObject = ref<Array<List>>([]);
+const listObject = ref<Array>([]);
 const taskObject = ref<Array<Task>>([]);
+const selectedList = ref<string>('Select');
+const selectedTaskUuid = ref<boolean>(false);
 const store = useStore(storeKey);
+const rangeValue = ref<Number>(1);
 
-onBeforeMount(() => {
-    const data = JSON.parse(localStorage.getItem('listObject'))
-    if(data!=undefined) {
-        listObject.value = data;
-    }
-    else {
-        listObject.value = []
-    }
-})
+const newTaskObject = computed(() => props.selectedTask)
 
-const onClick = () => {
-    console.log("something changed")
-}
+watch(() => {
+    const data = JSON.parse(localStorage.getItem('listObject'));
+    listObject.value = data ? data : [];
+
+    rangeValue.value = (newTaskObject.value.priority-1)*25
+
+    if (!newTaskObject.value.list_details) {
+        selectedList.value = 'Select';
+    } else {
+        selectedList.value = newTaskObject.value.list_details['list_details_uuid'];
+    }
+
+    if(newTaskObject.value.uuid) {
+        selectedTaskUuid.value = true
+    } else {
+        selectedTaskUuid.value = false
+    }
+});
+
 const closeTask = () => {
     console.log(newTaskObject)
     emit('taskClosed', false)
 }
-const newTaskObject = computed(() => props.selectedTask)
 
-const taskUpdated = () => {
-    if(taskObject.value.length === 0)
+const deleteTask = async() => {
+    try{
+        const response = await deleteTodo(newTaskObject.value.uuid);
+        const status:number = response.status;
+        const payload = response.data
+        if (status == 204){
+            emit('taskClosed', false)
+        } 
+    } catch (error: any) {
+        console.log(error)
+    }
+}
+const taskUpdated = async() => {
+    console.log(newTaskObject.value)
+    let data = {
+        title: newTaskObject.value.title,
+        description: newTaskObject.value.description,
+        priority: (rangeValue.value/25)+1,
+        due_date: newTaskObject.value.due_date,
+        complete: false
+    }
+    console.log(selectedList.value)
+    if(!(selectedList.value === 'Select')) {
+        data['list_details_uuid'] = selectedList.value
+    }
+
+    console.log("data", data)
+
+    if(newTaskObject.value.uuid)
     {
-        newTaskObject.value.id = 1
-    } else if(newTaskObject.value.id){
-        newTaskObject.value.id = newTaskObject.value.id
+        try{
+            const response = await changeTodo(newTaskObject.value.uuid, data);
+            const status:number = response.status;
+            const payload = response.data
+            console.log("todo",payload)
+            if (status == 204){
+                emit('taskClosed', false)
+            } 
+        } catch (error: any) {
+            console.log(error)
+        }
     } else {
-        newTaskObject.value.id = taskObject.value.length+1
-    }
-    
-    const list = listObject.value.find((item) => {
-        return item.name === newTaskObject.value.list
-    })
-    if(list!=undefined)
-    {
-        newTaskObject.value.listColor = list.hexCode
-    }
-
-    // taskObject.value.push(newTaskObject.value)
-    // console.log("newTaskObject after saving", taskObject.value)
-    // store.commit('taskMod/taskUpdatedStateMgt', newTaskObject.value)
-
-    if(taskObject.value!=null || taskObject.value!=undefined) {
-        let itemIndex: any;
-        for(let i=0;i<taskObject.value.length;i++)
-        {
-            if(taskObject.value[i].id == newTaskObject.value.id)
-            {
-                itemIndex = i;
-                break;
-            }
-            else{
-                itemIndex = undefined;
-            }
+        try{
+            const response = await createTodo(data);
+            const status:number = response.status;
+            const payload = response.data
+            console.log("todo",payload)
+            if (status == 201){
+                emit('taskClosed', false)
+            } 
+        } catch (error: any) {
+            console.log(error)
         }
-        if(itemIndex != undefined) {
-            taskObject.value.splice(itemIndex,1)
-            taskObject.value.push(newTaskObject.value)
-        }
-        else {
-            taskObject.value.push(newTaskObject.value)
-        }
-        localStorage.setItem('taskObject', JSON.stringify(taskObject.value));
-
     }
-    else {
-        const arr = []
-        arr.push(newTaskObject.value)
-        taskObject.value=arr
-        localStorage.setItem('taskObject', JSON.stringify(taskObject.value));
-    }
-    emit('taskClosed', false)
 }
 const setList = (e) => {
-    newTaskObject.value.list = e.target.value
+    console.log(e)
+    newTaskObject.value.list_details_uuid = e.target.value
 }
-onMounted(() => {
-    const data = JSON.parse(localStorage.getItem('taskObject'))
-    if(data!=undefined) {
-        taskObject.value = data;
-    }
-    else {
-        taskObject.value = []
-    }
-})
 </script>
 <style scoped>
 textarea {

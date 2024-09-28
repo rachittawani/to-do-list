@@ -8,24 +8,24 @@
                     <span class="text-sm">Add New Task</span>
                 </button>
             </div>
-            <div class="flex flex-col justify-between bg-gray-100 rounded-lg border border-black" v-for="(dummyTask, index) in dummyTasks" @click="showTask(dummyTask)">
+            <div class="flex flex-col justify-between bg-gray-100 rounded-lg border border-black" v-if="!isLoading" v-for="(task) in tasks" @click="showTask(task)">
                 <div class="flex flex-row justify-between cursor-pointer p-2 pb-4">
                     <div class="flex flex-row items-start gap-4">
                         <div class="p-2">
                             <input type="checkbox" class="flex checkbox checkbox-ms border-black hover:border-black checked:border-black">
                         </div>
                         <div class="flex flex-col gap-2">
-                            <p class="text-zinc-600 text-md">{{ dummyTask.task }}</p>
+                            <p class="text-zinc-600 text-md">{{ task.title }}</p>
                             <div class="flex flex-row gap-5">
-                                <div v-if="dummyTask.dueDate" class="flex flex-row gap-2 items-center">
+                                <div v-if="task.due_date" class="flex flex-row gap-2 items-center">
                                     <i class="fas fa-calendar-times text-zinc-600 text-md"></i>
-                                    <p class="text-zinc-600 text-sm">{{ dummyTask.dueDate }}</p>
-                                    <div class="verticalLine ml-3" v-if="dummyTask.list"></div>
+                                    <p class="text-zinc-600 text-sm">{{ task.due_date }}</p>
+                                    <div class="verticalLine ml-3" v-if="task.list_details"></div>
                                 </div>
                                
-                                <div v-if="dummyTask.list" class="flex flex-row gap-2 items-center">
-                                    <div :style="{ backgroundColor: dummyTask.listColor }" class="colorBox rounded-sm cursor-pointer"></div>
-                                    <p class="text-zinc-600 text-sm">{{ dummyTask.list }}</p>
+                                <div v-if="task.list_details" class="flex flex-row gap-2 items-center">
+                                    <div :style="{ backgroundColor: task.list_details['hex_color'] }" class="colorBox rounded-sm cursor-pointer"></div>
+                                    <p class="text-zinc-600 text-sm">{{ task.list_details['name'] }}</p>
                                 </div>
                             </div>
                         </div>
@@ -34,9 +34,9 @@
                         <i class="fas fa-angle-right text-zinc-600 text-lg"></i>
                     </div>
                 </div>
-                <div v-if="dummyTasks.length-1 != index">
-                    <hr class="border border-slate-400">
-                </div>
+            </div>
+            <div class="flex justify-center items-center h-full" v-else>
+                <span class="loading loading-bars loading-lg"></span>
             </div>
         </div>
         <div v-if="rightToggle" class="h-full w-1/3 px-2">
@@ -47,48 +47,52 @@
 <script setup lang="ts">
 import { ref, defineProps, onMounted, computed } from 'vue';
 import RightPanel from '../RightPanel/RightPanel.vue'
-// import { dummyTasks } from '../../utils/Dummy'
 import { Task } from '../../models/task.ts'
+import { getTodo } from '../../utils/apiService/index';
 
 const rightToggle = ref<boolean>(false)
 const taskSelected = ref<Task>({})
 const props = defineProps(['nameOfHeading']);
-const dummyTasks = ref<Array<Task>>([])
+const tasks = ref<Array<Task>>([])
+const isLoading = ref<boolean>(false)
+
+const getTodoDataForUser = async () => {
+    isLoading.value = true
+    try{
+        const response = await getTodo();
+        const status:number = response.status;
+        const payload = response.data
+        console.log("todo",payload)
+        if (status == 200){
+            tasks.value = payload
+            isLoading.value = false
+        } 
+    } catch (error: any) {
+        console.log(error)
+    }
+}
 
 onMounted(() => {
-    const data = JSON.parse(localStorage.getItem('taskObject'))
-    if(data!=undefined) {
-        dummyTasks.value = data;
-    }
-    else {
-        dummyTasks.value = []
-    }
+    getTodoDataForUser()
 })
-// const dummyTasks = computed(() => store.getters['taskMod/newTask'])
+// const tasks = computed(() => store.getters['taskMod/newTask'])
 const addNewTask = () => {
     rightToggle.value = true
     taskSelected.value = {
-        id: 0,
-        task: '',
+        title: '',
         description: '',
-        list: '',
-        listColor: '',
-        dueDate: ''
+        list_details_uuid: '',
+        priority: 0,
+        due_date: '',
+        complete: false
     }
 }
-const closingPanel = (closed:any) => {
-    const data = JSON.parse(localStorage.getItem('taskObject'))
-    if(data!=undefined) {
-        dummyTasks.value = data;
-    }
-    else {
-        dummyTasks.value = []
-    }
+const closingPanel = (closed: any) => {
+    getTodoDataForUser()
     rightToggle.value = closed
 }
-const showTask = (dumTask) => {
-    // taskSelected.value = dummyTasks.value.find(item => item.id === id)
-    taskSelected.value = dumTask
+const showTask = (task: any) => {
+    taskSelected.value = task
     console.log(taskSelected.value)
     rightToggle.value = true
 }
