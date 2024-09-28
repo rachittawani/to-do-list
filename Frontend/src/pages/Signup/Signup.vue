@@ -118,13 +118,6 @@ const isPasswordVisible = ref<boolean>(false);
 
 const router = useRouter()
 
-// const handleSubmit = () => {
-//     if(!email.value && !username.value && !password.value){
-//         console.log("bvwbkjbvkj")
-//         error.value = "Fill all the required detail."
-//     }
-// }
-
 const createUsers = async () => {
     if (!firstName.value || !lastName.value || !email.value || !phoneNumber.value || !username.value || !password.value) {
         error.value = 'Please fill in all required fields.';
@@ -170,7 +163,6 @@ const togglePasswordVisibility = () => {
 .customLine{
     height: 1px;
     opacity: 1;
-    /* background-color: rgb(221, 221, 221); */
     border-radius: 12px;
 }
 </style>
