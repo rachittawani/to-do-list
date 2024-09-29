@@ -22,6 +22,15 @@ export const postRequest = (url: string, data: any): Promise<AxiosResponse> => {
 	return axios.post(url, data, headers);
 };
 
+export const postRequestForLogin = (url: string, data: any): Promise<AxiosResponse> => {
+	const headers = {
+        headers:{
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    }
+	return axios.post(url, data, headers);
+};
+
 export const postRequestWithAuth = (url: string, data: any): Promise<AxiosResponse> => {
 	const token = Cookies.get('token')
     const tokenType = Cookies.get('tokenType')

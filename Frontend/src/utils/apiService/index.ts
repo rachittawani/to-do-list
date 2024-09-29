@@ -10,7 +10,7 @@ export const createUser = (data: any) => {
 }
 
 export const login = (data: any) => {
-    return APIBuilder.postRequest(CONSTANTS.LOGIN, data);
+    return APIBuilder.postRequestForLogin(CONSTANTS.LOGIN, data);
 }
 
 export const getTodo = () => {
