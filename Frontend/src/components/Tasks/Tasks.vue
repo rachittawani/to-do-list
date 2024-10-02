@@ -1,5 +1,6 @@
 <template>
     <div class="customGrid flex flex-row gap-2">
+        <Toast :toastDetails="toastDetailsValue" v-if="toastVisible" @toastClose="closeToast"/>
         <div class="flex flex-col gap-3 px-2" :class="rightToggle == true ? 'w-2/3': 'w-full'">
             <p class="text-5xl font-bold pb-5">{{ props.nameOfHeading }}</p>
             <div class="flex">
@@ -49,12 +50,16 @@ import { ref, defineProps, onMounted, computed } from 'vue';
 import RightPanel from '../RightPanel/RightPanel.vue'
 import { Task } from '../../models/task.ts'
 import { getTodo } from '../../utils/apiService/index';
+import ToastModel from '../../models/toast.ts';
+import Toast from '../../components/Toast/Toast.vue'
 
 const rightToggle = ref<boolean>(false)
 const taskSelected = ref<Task>({})
 const props = defineProps(['nameOfHeading']);
 const tasks = ref<Array<Task>>([])
 const isLoading = ref<boolean>(false)
+const toastVisible = ref<boolen>(false)
+const toastDetailsValue = ref<ToastModel>({})
 
 const getTodoDataForUser = async () => {
     isLoading.value = true
@@ -66,10 +71,21 @@ const getTodoDataForUser = async () => {
         if (status == 200){
             tasks.value = payload
             isLoading.value = false
+            toastDetailsValue.value.name = 'success'
+            toastDetailsValue.value.msg = 'Fetch all todos!!!'
+            toastVisible.value = true
         } 
     } catch (error: any) {
-        console.log(error)
+        isLoading.value = false
+        toastDetailsValue.value.name = 'error'
+        toastDetailsValue.value.msg = 'Could not fetch todos!!!'
+        toastVisible.value = true
     }
+}
+
+const closeToast = (closeingToast: boolean) => {
+    toastVisible.value = closeingToast
+    console.log("close", toastVisible.value)
 }
 
 onMounted(() => {
@@ -93,7 +109,6 @@ const closingPanel = (closed: any) => {
 }
 const showTask = (task: any) => {
     taskSelected.value = task
-    console.log(taskSelected.value)
     rightToggle.value = true
 }
 </script>
