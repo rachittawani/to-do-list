@@ -1,4 +1,5 @@
 <template>
+    <Toast :toastDetails="toastDetailsValue" v-if="toastVisible" @toastClose="closeToast"/>
     <div class="flex flex-col justify-between bg-gray-100 rounded-lg h-full border border-black overflow-y-scroll">
         <div class="flex flex-col pt-3 px-5 gap-3">
             <div class="flex flex-row justify-between items-center">
@@ -48,6 +49,8 @@ import { Task } from '../../models/task.ts';
 import { storeKey } from '../../store/store'
 import { useStore } from 'vuex'
 import { createTodo, changeTodo, deleteTodo } from '../../utils/apiService/index';
+import ToastModel from '../../models/toast.ts';
+import Toast from '../../components/Toast/Toast.vue'
 
 const emit = defineEmits(['taskClosed']);
 const props = defineProps(['selectedTask']);
@@ -57,6 +60,8 @@ const selectedList = ref<string>('Select');
 const selectedTaskUuid = ref<boolean>(false);
 const store = useStore(storeKey);
 const rangeValue = ref<Number>(1);
+const toastVisible = ref<boolen>(false);
+const toastDetailsValue = ref<ToastModel>({});
 
 const newTaskObject = computed(() => props.selectedTask)
 
@@ -88,16 +93,26 @@ const deleteTask = async() => {
     try{
         const response = await deleteTodo(newTaskObject.value.uuid);
         const status:number = response.status;
-        const payload = response.data
+        const payload = response.data;
         if (status == 204){
-            emit('taskClosed', false)
+            toastDetailsValue.value.name = 'success'
+            toastDetailsValue.value.msg = 'Deleted Successfull!!!'
+            toastVisible.value = true
+            setTimeout(() => {
+                emit('taskClosed', false);
+            }, 1000);
         } 
     } catch (error: any) {
-        console.log(error)
+        toastDetailsValue.value.name = 'error'
+        toastDetailsValue.value.msg = error.response.data.detail
+        toastVisible.value = true
     }
 }
+
 const taskUpdated = async() => {
-    console.log(newTaskObject.value)
+    if(rangeValue.value == -25) {
+        rangeValue.value = 0
+    }
     let data = {
         title: newTaskObject.value.title,
         description: newTaskObject.value.description,
@@ -105,42 +120,55 @@ const taskUpdated = async() => {
         due_date: newTaskObject.value.due_date,
         complete: false
     }
-    console.log(selectedList.value)
     if(!(selectedList.value === 'Select')) {
         data['list_details_uuid'] = selectedList.value
     }
-
-    console.log("data", data)
 
     if(newTaskObject.value.uuid)
     {
         try{
             const response = await changeTodo(newTaskObject.value.uuid, data);
             const status:number = response.status;
-            const payload = response.data
-            console.log("todo",payload)
+            const payload = response.data;
             if (status == 204){
-                emit('taskClosed', false)
+                toastDetailsValue.value.name = 'success'
+                toastDetailsValue.value.msg = 'Tasked Updated Successfull!!!'
+                toastVisible.value = true
+                setTimeout(() => {
+                    emit('taskClosed', false);
+                }, 1000);
             } 
         } catch (error: any) {
-            console.log(error)
+            toastDetailsValue.value.name = 'error'
+            toastDetailsValue.value.msg = error.response.data.detail
+            toastVisible.value = true
         }
     } else {
         try{
             const response = await createTodo(data);
             const status:number = response.status;
-            const payload = response.data
-            console.log("todo",payload)
+            const payload = response.data;
             if (status == 201){
-                emit('taskClosed', false)
+                toastDetailsValue.value.name = 'success'
+                toastDetailsValue.value.msg = 'Tasked Created Successfull!!!'
+                toastVisible.value = true
+                setTimeout(() => {
+                    emit('taskClosed', false);
+                }, 1000);
             } 
         } catch (error: any) {
-            console.log(error)
+            toastDetailsValue.value.name = 'error'
+            toastDetailsValue.value.msg = error.response.data.detail
+            toastVisible.value = true
         }
     }
 }
+
+const closeToast = (closeingToast: boolean) => {
+    toastVisible.value = closeingToast
+}
+
 const setList = (e) => {
-    console.log(e)
     newTaskObject.value.list_details_uuid = e.target.value
 }
 </script>

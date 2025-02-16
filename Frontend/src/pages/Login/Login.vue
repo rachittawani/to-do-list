@@ -1,5 +1,6 @@
 <template>
     <div class="customGrid flex flex-row p-5 gap-4">
+        <Toast :toastDetails="toastDetailsValue" v-if="toastVisible" @toastClose="closeToast"/>
         <img class="h-full w-1/2 rounded-2xl object-cover border border-slate-500" src="/src/assets/landingPage.jpg" alt="Landing Page" >
         <div class="flex flex-col px-28 justify-center w-1/2 h-full rounded-2xl border border-slate-500">
             <h1 class="font-bold font-sans text-4xl m-2 p-2 text-center">Login</h1>
@@ -49,12 +50,14 @@
                 <button 
                     type="button" 
                     class="bg-neutral-300 text-slate-900 font-bold font-sans rounded-lg flex justify-center m-2 p-2 w-1/2"
+                    disabled
                 >
                     Google
                 </button>
                 <button 
                     type="button" 
                     class="bg-neutral-300 text-slate-900 font-bold font-sans rounded-lg flex justify-center m-2 p-2 w-1/2"
+                    disabled
                 >
                     Facebook
                 </button>
@@ -70,6 +73,8 @@ import { useRouter } from 'vue-router'
 import { ref } from 'vue';
 import { login } from '../../utils/apiService/index';
 import Cookies from 'js-cookie';
+import ToastModel from '../../models/toast.ts';
+import Toast from '../../components/Toast/Toast.vue'
 
 const router = useRouter()
 
@@ -78,6 +83,8 @@ const password = ref<string>('');
 const error = ref<string>('');
 const errorVisible = ref<boolean>(false);
 const isPasswordVisible = ref<boolean>(false);
+const toastVisible = ref<boolen>(false);
+const toastDetailsValue = ref<ToastModel>({});
 
 const redirectToSignUp = () => {
     router.push("/signup")
@@ -101,12 +108,24 @@ const redirectToHome = async () => {
         Cookies.set('token', payload.access_token)
         Cookies.set('tokenType', payload.token_type)
         if (status == 200){
+            toastDetailsValue.value.name = 'success'
+            toastDetailsValue.value.msg = 'Login Successfull!!!'
+            toastVisible.value = true
             router.push("/home")
         } 
     } catch (error: any) {
-        console.log(error)
+        toastDetailsValue.value.name = 'error'
+        toastDetailsValue.value.msg = error.response.data.detail
+        toastVisible.value = true
+        console.log(error.response.data.detail)
     }
 }
+
+const closeToast = (closeingToast: boolean) => {
+    toastVisible.value = closeingToast
+    console.log("close", toastVisible.value)
+}
+
 const togglePasswordVisibility = () => {
     isPasswordVisible.value = !isPasswordVisible.value;
 }
@@ -119,7 +138,6 @@ const togglePasswordVisibility = () => {
 .customLine{
     height: 1px;
     opacity: 1;
-    /* background-color: rgb(221, 221, 221); */
     border-radius: 12px;
 }
 </style>

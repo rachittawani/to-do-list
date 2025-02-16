@@ -28,12 +28,6 @@ export const routes: Array<RouteRecordRaw> = [
               component: () => import("../pages/Today/Today.vue"),
             },
             {
-                path: "/home/upcoming",
-                name: "upcoming",
-                meta: { requiresAuth: true },
-                component: () => import("../pages/Upcoming/Upcoming.vue"),
-            },
-            {
                 path: "/home/stickywall",
                 name: "stickywall",
                 meta: { requiresAuth: true },

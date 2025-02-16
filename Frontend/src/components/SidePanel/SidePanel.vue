@@ -73,6 +73,8 @@ import { List } from '../../models/list'
 import { defineEmits } from 'vue';
 import Cookies from 'js-cookie';
 import { readLink, createLink, deleteLink } from '../../utils/apiService/index';
+import ToastModel from '../../models/toast.ts';
+import Toast from '../../components/Toast/Toast.vue'
 
 const router = useRouter();
 const emit = defineEmits(['toggleSidePanel']);
@@ -83,16 +85,13 @@ const listOpen = ref<boolean>(false)
 const colorSelected = ref<string>("#000000")
 const listName = ref<string>("")
 const listObject = ref<Array<List>>([])
+const toastVisible = ref<boolen>(false);
+const toastDetailsValue = ref<ToastModel>({});
 
 const tabs = 
 [
     {
-        name: 'Upcoming',
-        value: 'upcoming',
-        icon: 'fas fa-angle-double-right'
-    },
-    {
-        name: 'Today',
+        name: 'To Do',
         value: 'today',
         icon: 'fas fa-tasks'
     },
@@ -133,10 +132,17 @@ const deleteLinks = async(uuid: any) => {
         const status:number = response.status;
         console.log("tag created")
         if (status == 204){
-            readLinkTags()
+            toastDetailsValue.value.name = 'success'
+            toastDetailsValue.value.msg = 'Tag Deleted Successfull!!!'
+            toastVisible.value = true
+            setTimeout(() => {
+                readLinkTags()
+            })
         } 
     } catch (error: any) {
-        console.log(error)
+        toastDetailsValue.value.name = 'error'
+        toastDetailsValue.value.msg = error.response.data.detail
+        toastVisible.value = true
     }
 }
 const listDetails = async() => {
@@ -186,6 +192,10 @@ const readLinkTags = async() => {
     } catch (error: any) {
         console.log(error)
     }
+}
+const closeToast = (closeingToast: boolean) => {
+    toastVisible.value = closeingToast
+    console.log("close", toastVisible.value)
 }
 onMounted(() => {
     readLinkTags()

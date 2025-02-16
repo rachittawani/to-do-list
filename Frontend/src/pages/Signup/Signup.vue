@@ -1,5 +1,6 @@
 <template>
     <div class="customGrid flex flex-row p-5 gap-4">
+        <Toast :toastDetails="toastDetailsValue" v-if="toastVisible" @toastClose="closeToast"/>
         <img class="h-full w-1/2 rounded-2xl object-cover border border-slate-500" src="/src/assets/landingPage.jpg" alt="Landing Page" >
         <div class="flex flex-col px-28 justify-center w-1/2 h-full rounded-2xl border border-slate-500">
             <h1 class="font-bold font-sans text-4xl m-2 p-2 text-center">Sign up</h1>
@@ -105,6 +106,8 @@
 import { useRouter } from 'vue-router'
 import { createUser } from '../../utils/apiService/index';
 import { ref } from 'vue';
+import ToastModel from '../../models/toast.ts';
+import Toast from '../../components/Toast/Toast.vue'
 
 const username = ref<string>('');
 const email = ref<string>('');
@@ -115,6 +118,8 @@ const password = ref<string>('');
 const error = ref<string>('');
 const errorVisible = ref<boolean>(false);
 const isPasswordVisible = ref<boolean>(false);
+const toastVisible = ref<boolen>(false);
+const toastDetailsValue = ref<ToastModel>({});
 
 const router = useRouter()
 
@@ -140,11 +145,23 @@ const createUsers = async () => {
         const response = await createUser(data);
         const status:number = response.status;
         if (status == 201){
-            redirectToLogin()
+            toastVisible.value = true
+            toastDetailsValue.value.name = 'success'
+            toastDetailsValue.value.msg = 'Signup Successfull!!!'
+            setTimeout(() => {
+                redirectToLogin()
+            }, 1000);
         } 
     } catch (error: any) {
-        console.log(error)
+        toastVisible.value = true
+        toastDetailsValue.value.name = 'error'
+        toastDetailsValue.value.msg = 'User not created'
     }
+}
+
+const closeToast = (closeingToast: boolean) => {
+    toastVisible.value = closeingToast
+    console.log("close", toastVisible.value)
 }
 
 const redirectToLogin = () => {

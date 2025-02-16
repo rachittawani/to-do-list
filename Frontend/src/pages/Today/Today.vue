@@ -5,7 +5,7 @@
 import { ref } from 'vue';
 import Tasks from '../../components/Tasks/Tasks.vue'
 
-const value = ref("Today")
+const value = ref("To Do")
 
 </script>
 <style>

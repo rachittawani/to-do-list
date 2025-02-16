@@ -67,7 +67,6 @@ const getTodoDataForUser = async () => {
         const response = await getTodo();
         const status:number = response.status;
         const payload = response.data
-        console.log("todo",payload)
         if (status == 200){
             tasks.value = payload
             isLoading.value = false
